@@ -156,13 +156,10 @@ def on_move(data):
     if differences != 2:  # Only 2 positions should change in a valid move
         return
         
+    # Update the current player's board and correct tile count
     room.players[player_name]['board'] = new_board
     correct_tiles = count_correct_tiles(new_board)
     room.players[player_name]['correct_tiles'] = correct_tiles
-    
-    # Update the current player's board and correct tile count
-    room.players[player_name]['board'] = new_board
-    room.players[player_name]['correct_tiles'] = count_correct_tiles(new_board)
     
     # Broadcast the updated board and player states
     emit('board_update', {
