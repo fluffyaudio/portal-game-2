@@ -164,9 +164,10 @@ def on_move(data):
     # Broadcast the updated board and player states
     emit('board_update', {
         'board': new_board,
-        'correct_tiles': room.players[player_name]['correct_tiles']
+        'correct_tiles': correct_tiles
     }, room=game_id)
-    emit('update_players', room.get_sorted_players(), room=game_id)
+    # Broadcast to all players the updated player list with new correct tile counts
+    socketio.emit('update_players', room.get_sorted_players(), room=game_id)
     
     # Check for win condition
     if correct_tiles == BOARD_SIZE - 1:  # All tiles except empty space
