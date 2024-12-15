@@ -160,12 +160,15 @@ def on_move(data):
     correct_tiles = count_correct_tiles(new_board)
     room.players[player_name]['correct_tiles'] = correct_tiles
     
-    # Update all players with the new board state
+    # Update the current player's board and correct tile count
     room.players[player_name]['board'] = new_board
-    room.players[player_name]['correct_tiles'] = correct_tiles
+    room.players[player_name]['correct_tiles'] = count_correct_tiles(new_board)
     
     # Broadcast the updated board and player states
-    emit('board_update', {'board': new_board}, room=game_id)
+    emit('board_update', {
+        'board': new_board,
+        'correct_tiles': room.players[player_name]['correct_tiles']
+    }, room=game_id)
     emit('update_players', room.get_sorted_players(), room=game_id)
     
     # Check for win condition

@@ -327,6 +327,8 @@
         socket.on('board_update', data => {
             gameBoard = data.board;
             createBoard(gameBoard);
+            // Update the player's correct tile count immediately
+            updatePlayersList(socket.players);
         });
     </script>
 </body>
