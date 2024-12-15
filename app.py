@@ -36,13 +36,14 @@ class GameRoom:
         self.initial_board = None
         self.game_timer = None
         
-    def add_player(self, player_name):
+    def add_player(self, player_name, sid):
         if not self.initial_board:
             self.initial_board = generate_board()
         self.players[player_name] = {
             'ready': False,
             'board': self.initial_board.copy(),
-            'correct_tiles': count_correct_tiles(self.initial_board)
+            'correct_tiles': count_correct_tiles(self.initial_board),
+            'sid': sid
         }
         
     def get_sorted_players(self):
@@ -97,9 +98,9 @@ def on_join(data):
         return
         
     if not room.game_started:
-        room.add_player(player_name)
+        room.add_player(player_name, request.sid)
         socketio.server.enter_room(request.sid, game_id)
-        emit('update_players', room.get_sorted_players(), room=game_id)
+        socketio.emit('update_players', room.get_sorted_players(), room=game_id)
     else:
         emit('error', {'message': 'Game already in progress'})
 
@@ -161,16 +162,25 @@ def on_move(data):
     correct_tiles = count_correct_tiles(new_board)
     room.players[player_name]['correct_tiles'] = correct_tiles
     
-    # First broadcast the board update to all players
-    socketio.emit('board_update', {
+    # Update the player's state
+    room.players[player_name]['board'] = new_board
+    room.players[player_name]['correct_tiles'] = correct_tiles
+
+    # Broadcast updates to all clients in the room
+    update_data = {
         'board': new_board,
         'correct_tiles': correct_tiles,
         'player': player_name
-    }, room=game_id)
+    }
     
-    # Then broadcast the updated player list with new correct tile counts
+    # Send individual updates to each player
+    for player in room.players.values():
+        socketio.emit('board_update', update_data, room=player['sid'])
+    
+    # Update player list for everyone
     player_list = room.get_sorted_players()
-    socketio.emit('update_players', player_list, room=game_id)
+    for player in room.players.values():
+        socketio.emit('update_players', player_list, room=player['sid'])
     
     # Check for win condition
     if correct_tiles == BOARD_SIZE - 1:  # All tiles except empty space
