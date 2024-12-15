@@ -161,10 +161,8 @@ def on_move(data):
     room.players[player_name]['correct_tiles'] = correct_tiles
     
     # Update all players with the new board state
-    correct_count = count_correct_tiles(new_board)
-    for player in room.players.values():
-        player['board'] = new_board.copy()
-        player['correct_tiles'] = correct_count
+    room.players[player_name]['board'] = new_board
+    room.players[player_name]['correct_tiles'] = correct_tiles
     
     # Broadcast the updated board and player states
     emit('board_update', {'board': new_board}, room=game_id)

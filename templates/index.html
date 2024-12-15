@@ -313,7 +313,7 @@
             listElement.innerHTML = '<h3>Players</h3>';
             players.forEach(player => {
                 const playerDiv = document.createElement('div');
-                playerDiv.textContent = `${player.name} - Correct: ${player.correct_tiles} ${player.ready ? '(Ready)' : ''}`;
+                playerDiv.textContent = `${player.name} - Correct Tiles: ${player.correct_tiles}/15 ${player.ready ? '(Ready)' : ''}`;
                 listElement.appendChild(playerDiv);
             });
         }
