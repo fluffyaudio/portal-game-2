@@ -296,6 +296,10 @@
         socket.on('game_start', data => {
             createBoard(data.board);
         });
+        socket.on('board_update', data => {
+            gameBoard = data.board;
+            createBoard(gameBoard);
+        });
     </script>
 </body>
 </html>
