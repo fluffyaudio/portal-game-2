@@ -202,7 +202,31 @@
         });
         
         socket.on('game_won', data => {
-            alert(`${data.winner} has won the game!`);
+            const message = data.winner === 'Time Expired - No Winner' 
+                ? 'Game Over - Time Expired!' 
+                : `🎉 Congratulations ${data.winner}! You've won the game! 🎉`;
+            
+            // Create a styled modal for the win message
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.9);
+                padding: 20px;
+                border-radius: 10px;
+                color: white;
+                text-align: center;
+                z-index: 1000;
+                font-size: 1.5em;
+            `;
+            modal.textContent = message;
+            document.body.appendChild(modal);
+            
+            // Remove modal after 5 seconds
+            setTimeout(() => modal.remove(), 5000);
+            
             gameActive = false;
             isReady = false;
             document.getElementById('ready-button').disabled = false;
