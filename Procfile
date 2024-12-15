@@ -1,1 +1,1 @@
-web: gunicorn --worker-class eventlet -w 1 --log-level debug --timeout 600 --keep-alive 300 --graceful-timeout 600 app:app
+web: gunicorn --worker-class eventlet -w 1 --log-level debug --timeout 2400 --keep-alive 1200 --graceful-timeout 2400 app:app

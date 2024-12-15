@@ -26,7 +26,7 @@ socketio = SocketIO(
 # Game state
 game_rooms = {}  # Dictionary to store multiple game instances
 BOARD_SIZE = 16  # 4x4 board
-GAME_DURATION = 600  # 10 minutes in seconds
+GAME_DURATION = 1800  # 30 minutes in seconds
 
 class GameRoom:
     def __init__(self, room_id):
