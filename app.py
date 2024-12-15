@@ -157,14 +157,17 @@ def on_move(data):
         return
         
     room.players[player_name]['board'] = new_board
-    room.players[player_name]['correct_tiles'] = count_correct_tiles(new_board)
+    correct_tiles = count_correct_tiles(new_board)
+    room.players[player_name]['correct_tiles'] = correct_tiles
+    
+    # Broadcast the updated board to all players
+    emit('board_update', {'board': new_board}, room=game_id)
+    emit('update_players', room.get_sorted_players(), room=game_id)
     
     # Check for win condition
-    if count_correct_tiles(new_board) == BOARD_SIZE:
+    if correct_tiles == BOARD_SIZE - 1:  # All tiles except empty space
         emit('game_won', {'winner': player_name}, room=game_id)
         room.reset()
-    else:
-        emit('update_players', room.get_sorted_players(), room=game_id)
 
 
 @socketio.on('connect')
