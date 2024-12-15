@@ -297,6 +297,8 @@
         socket.on('update_players', updatePlayersList);
         socket.on('game_start', data => {
             createBoard(data.board);
+            document.getElementById('ready-button').style.display = 'none';
+            gameActive = true;
         });
         socket.on('board_update', data => {
             gameBoard = data.board;
