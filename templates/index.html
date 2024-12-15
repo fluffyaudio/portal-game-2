@@ -57,6 +57,28 @@
         let playerName = '';
         let gameBoard = [];
         let isReady = false;
+        let gameActive = false;
+        
+        socket.on('error', data => {
+            alert(data.message);
+            // Reset login screen if needed
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+        });
+        
+        socket.on('game_won', data => {
+            alert(`${data.winner} has won the game!`);
+            gameActive = false;
+            isReady = false;
+            document.getElementById('ready-button').disabled = false;
+        });
+        
+        socket.on('game_reset', () => {
+            gameActive = false;
+            isReady = false;
+            document.getElementById('ready-button').disabled = false;
+            gameBoard = [];
+        });
 
         function joinGame() {
             playerName = document.getElementById('player-name').value.trim();
