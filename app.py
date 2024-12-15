@@ -21,7 +21,7 @@ def generate_board():
 
 def count_correct_tiles(board):
     """Count number of tiles in their correct position"""
-    return sum(1 for i, num in enumerate(board) if num == i)
+    return sum(1 for i, num in enumerate(board) if (num == i + 1) or (i == 15 and num == 0))
 
 @app.route('/')
 def index():
