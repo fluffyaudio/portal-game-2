@@ -189,10 +189,10 @@ def reset_game(game_id):
         game_rooms[game_id].reset()
         emit('game_reset', room=game_id)
 
-def timer_expired():
+def timer_expired(game_id):
     """Handle game timer expiration"""
-    emit('game_won', {'winner': 'Time Expired - No Winner'}, broadcast=True)
-    reset_game()
+    emit('game_won', {'winner': 'Time Expired - No Winner'}, room=game_id)
+    reset_game(game_id)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))

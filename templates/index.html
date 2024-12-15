@@ -234,7 +234,7 @@
         function setReady() {
             isReady = true;
             document.getElementById('ready-button').disabled = true;
-            socket.emit('ready', { name: playerName });
+            socket.emit('ready', { name: playerName, game_id: gameId });
         }
 
         function createBoard(board) {
