@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, emit
 import random
 import json
+import threading
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
@@ -12,6 +14,8 @@ players = {}
 game_started = False
 initial_board = None
 BOARD_SIZE = 16  # 4x4 board
+game_timer = None
+GAME_DURATION = 1800  # 30 minutes in seconds
 
 def generate_board():
     """Generate a random solvable 15 puzzle board"""
@@ -61,6 +65,11 @@ def on_ready(data):
         # Check if all players are ready
         if all(player['ready'] for player in players.values()):
             game_started = True
+            global game_timer
+            if game_timer:
+                game_timer.cancel()
+            game_timer = threading.Timer(GAME_DURATION, timer_expired)
+            game_timer.start()
             emit('game_start', {'board': initial_board}, broadcast=True)
         
         emit('update_players', get_sorted_players(), broadcast=True)
@@ -117,14 +126,19 @@ def on_disconnect():
 
 def reset_game():
     """Reset the game state"""
-    global game_started, initial_board
+    global game_started, initial_board, game_timer
     game_started = False
     initial_board = None
-    for player in players.values():
-        player['ready'] = False
-        player['board'] = []
-        player['correct_tiles'] = 0
+    players.clear()  # Clear all players instead of just resetting their state
+    if game_timer:
+        game_timer.cancel()
+        game_timer = None
     emit('game_reset', broadcast=True)
+
+def timer_expired():
+    """Handle game timer expiration"""
+    emit('game_won', {'winner': 'Time Expired - No Winner'}, broadcast=True)
+    reset_game()
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

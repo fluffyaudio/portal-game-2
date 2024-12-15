@@ -86,6 +86,12 @@
             isReady = false;
             document.getElementById('ready-button').disabled = false;
             gameBoard = [];
+            // Show login screen again
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('hidden');
+            // Clear player name
+            playerName = '';
+            document.getElementById('player-name').value = '';
         });
 
         function joinGame() {
