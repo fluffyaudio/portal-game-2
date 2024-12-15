@@ -24,12 +24,41 @@ socketio = SocketIO(
 )
 
 # Game state
-players = {}
-game_started = False
-initial_board = None
+game_rooms = {}  # Dictionary to store multiple game instances
 BOARD_SIZE = 16  # 4x4 board
-game_timer = None
 GAME_DURATION = 1800  # 30 minutes in seconds
+
+class GameRoom:
+    def __init__(self, room_id):
+        self.room_id = room_id
+        self.players = {}
+        self.game_started = False
+        self.initial_board = None
+        self.game_timer = None
+        
+    def add_player(self, player_name):
+        if not self.initial_board:
+            self.initial_board = generate_board()
+        self.players[player_name] = {
+            'ready': False,
+            'board': self.initial_board.copy(),
+            'correct_tiles': count_correct_tiles(self.initial_board)
+        }
+        
+    def get_sorted_players(self):
+        sorted_players = [
+            {'name': name, 'correct_tiles': data['correct_tiles'], 'ready': data['ready']}
+            for name, data in self.players.items()
+        ]
+        return sorted(sorted_players, key=lambda x: x['correct_tiles'], reverse=True)
+        
+    def reset(self):
+        self.game_started = False
+        self.initial_board = None
+        self.players.clear()
+        if self.game_timer:
+            self.game_timer.cancel()
+            self.game_timer = None
 
 def generate_board():
     """Generate a random solvable 15 puzzle board"""
@@ -42,51 +71,61 @@ def count_correct_tiles(board):
     return sum(1 for i, num in enumerate(board) if (num == i + 1) or (i == 15 and num == 0))
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/<game_id>')
+def index(game_id=None):
+    return render_template('index.html', game_id=game_id)
 
 @socketio.on('join')
 def on_join(data):
     """Handle new player joining"""
-    global initial_board
     player_name = data['name'].strip()
+    game_id = data.get('game_id', 'default')
     
     # Validate player name
-    if not player_name or player_name in players:
-        emit('error', {'message': 'Invalid or duplicate player name'})
+    if not player_name:
+        emit('error', {'message': 'Invalid player name'})
         return
         
-    if not game_started:
-        if not initial_board:
-            initial_board = generate_board()
-        players[player_name] = {
-            'ready': False,
-            'board': initial_board.copy(),
-            'correct_tiles': count_correct_tiles(initial_board)
-        }
-        emit('update_players', get_sorted_players(), broadcast=True)
+    # Create game room if it doesn't exist
+    if game_id not in game_rooms:
+        game_rooms[game_id] = GameRoom(game_id)
+    
+    room = game_rooms[game_id]
+    
+    if player_name in room.players:
+        emit('error', {'message': 'Duplicate player name'})
+        return
+        
+    if not room.game_started:
+        room.add_player(player_name)
+        socketio.server.enter_room(request.sid, game_id)
+        emit('update_players', room.get_sorted_players(), room=game_id)
     else:
         emit('error', {'message': 'Game already in progress'})
 
 @socketio.on('ready')
 def on_ready(data):
     """Handle player ready status"""
-    global game_started
     player_name = data['name']
-    if player_name in players:
-        players[player_name]['ready'] = True
+    game_id = data.get('game_id', 'default')
+    
+    if game_id not in game_rooms:
+        return
+        
+    room = game_rooms[game_id]
+    if player_name in room.players:
+        room.players[player_name]['ready'] = True
         
         # Check if all players are ready
-        if all(player['ready'] for player in players.values()):
-            game_started = True
-            global game_timer
-            if game_timer:
-                game_timer.cancel()
-            game_timer = threading.Timer(GAME_DURATION, timer_expired)
-            game_timer.start()
-            emit('game_start', {'board': initial_board}, broadcast=True)
+        if all(player['ready'] for player in room.players.values()):
+            room.game_started = True
+            if room.game_timer:
+                room.game_timer.cancel()
+            room.game_timer = threading.Timer(GAME_DURATION, lambda: timer_expired(game_id))
+            room.game_timer.start()
+            emit('game_start', {'board': room.initial_board}, room=game_id)
         
-        emit('update_players', get_sorted_players(), broadcast=True)
+        emit('update_players', room.get_sorted_players(), room=game_id)
 
 @socketio.on('move')
 def on_move(data):

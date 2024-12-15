@@ -153,6 +153,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
+        // Get game ID from URL or use default
+        const gameId = window.location.pathname.substring(1) || 'default';
         // Socket.IO connection status handling
         let connectionStatus = false;
         
@@ -222,7 +224,10 @@
             if (playerName) {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('game-screen').classList.remove('hidden');
-                socket.emit('join', { name: playerName });
+                socket.emit('join', { 
+                    name: playerName,
+                    game_id: gameId
+                });
             }
         }
 
