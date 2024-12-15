@@ -11,7 +11,7 @@ import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet', logger=True, engineio_logger=True)
 
 # Game state
 players = {}
@@ -146,4 +146,4 @@ def timer_expired():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))
-    socketio.run(app, host='0.0.0.0', port=port)
+    socketio.run(app, host='0.0.0.0', port=port, debug=True)
