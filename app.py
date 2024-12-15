@@ -169,11 +169,6 @@ def on_move(data):
     emit('update_players', room.get_sorted_players(), room=game_id)
     
     # Check for win condition
-    if correct_count == BOARD_SIZE - 1:  # All tiles except empty space
-        emit('game_won', {'winner': player_name}, room=game_id)
-        room.reset()
-    
-    # Check for win condition
     if correct_tiles == BOARD_SIZE - 1:  # All tiles except empty space
         emit('game_won', {'winner': player_name}, room=game_id)
         room.reset()
