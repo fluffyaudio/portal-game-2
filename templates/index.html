@@ -2,10 +2,96 @@
 <html>
 <head>
     <title>15 Puzzle - Multiplayer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #4a4a4a);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .intro-section h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .intro-section p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        #login-screen {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        #player-name {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
         .game-container {
             display: flex;
+            flex-direction: column;
             gap: 20px;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .game-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
         }
         .board {
             display: grid;
@@ -46,9 +132,15 @@
     </style>
 </head>
 <body>
+    <div class="intro-section">
+        <h1>15 Puzzle Challenge</h1>
+        <p>Welcome to the multiplayer 15 Puzzle game! Compete with players worldwide to arrange the tiles in order. The faster you solve it, the higher you rank!</p>
+    </div>
+
     <div id="login-screen">
+        <h2 style="margin-bottom: 20px; text-align: center;">Join the Game</h2>
         <input type="text" id="player-name" placeholder="Enter your name">
-        <button onclick="joinGame()">Join Game</button>
+        <button onclick="joinGame()">Start Playing</button>
     </div>
 
     <div id="game-screen" class="hidden">
