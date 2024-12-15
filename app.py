@@ -11,7 +11,17 @@ import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet', logger=True, engineio_logger=True)
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode='eventlet',
+    logger=True,
+    engineio_logger=True,
+    ping_timeout=20,
+    ping_interval=25,
+    max_http_buffer_size=1e8,
+    manage_session=False
+)
 
 # Game state
 players = {}
@@ -119,8 +129,13 @@ def get_sorted_players():
     ]
     return sorted(sorted_players, key=lambda x: x['correct_tiles'], reverse=True)
 
+@socketio.on('connect')
+def on_connect():
+    print(f"Client connected: {request.sid}")
+
 @socketio.on('disconnect')
 def on_disconnect():
+    print(f"Client disconnected: {request.sid}")
     """Handle player disconnection"""
     for player_name, player_data in list(players.items()):
         if request.sid == player_data.get('sid', None):

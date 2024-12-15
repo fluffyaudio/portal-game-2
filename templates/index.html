@@ -153,12 +153,43 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
-        const socket = io();
+        // Socket.IO connection status handling
+        let connectionStatus = false;
+        
+        function updateConnectionStatus(status) {
+            connectionStatus = status;
+            const readyButton = document.getElementById('ready-button');
+            if (readyButton) {
+                readyButton.disabled = !status;
+            }
+        }
+
+        const socket = io({
+            transports: ['websocket', 'polling'],
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
+        });
         let playerName = '';
         let gameBoard = [];
         let isReady = false;
         let gameActive = false;
         
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            updateConnectionStatus(true);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            updateConnectionStatus(false);
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            updateConnectionStatus(false);
+        });
+
         socket.on('error', data => {
             alert(data.message);
             // Reset login screen if needed
