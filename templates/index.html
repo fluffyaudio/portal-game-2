@@ -23,6 +23,14 @@
             justify-content: center;
             font-size: 24px;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .tile:not(.empty) {
+            background-image: url('/static/portal.png');
+            background-size: 320px 320px; /* 4x4 grid of the full image */
+            color: rgba(255, 255, 255, 0.8); /* Semi-transparent number */
+            text-shadow: 1px 1px 2px black; /* Make numbers readable */
         }
         .empty {
             background: #ccc;
@@ -105,6 +113,16 @@
                 tile.className = `tile ${num === 0 ? 'empty' : ''}`;
                 tile.textContent = num === 0 ? '' : num;
                 tile.onclick = () => handleMove(index);
+                
+                if (num !== 0) {
+                    // Calculate the original position of this tile
+                    const originalRow = Math.floor((num - 1) / 4);
+                    const originalCol = (num - 1) % 4;
+                    // Position background image
+                    tile.style.backgroundPosition = 
+                        `-${originalCol * 80}px -${originalRow * 80}px`;
+                }
+                
                 boardElement.appendChild(tile);
             });
         }
