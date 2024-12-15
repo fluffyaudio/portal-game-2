@@ -132,9 +132,15 @@ def on_move(data):
     """Handle player moves"""
     player_name = data['name']
     new_board = data['board']
+    game_id = data.get('game_id', 'default')
+    
+    if game_id not in game_rooms:
+        return
+        
+    room = game_rooms[game_id]
     
     # Validate the move
-    if not player_name in players or not game_started:
+    if not player_name in room.players or not room.game_started:
         return
         
     # Validate board state
@@ -145,28 +151,21 @@ def on_move(data):
         return
         
     # Verify only one tile moved
-    old_board = players[player_name]['board']
+    old_board = room.players[player_name]['board']
     differences = sum(1 for i in range(BOARD_SIZE) if old_board[i] != new_board[i])
     if differences != 2:  # Only 2 positions should change in a valid move
         return
         
-    players[player_name]['board'] = new_board
-    players[player_name]['correct_tiles'] = count_correct_tiles(new_board)
+    room.players[player_name]['board'] = new_board
+    room.players[player_name]['correct_tiles'] = count_correct_tiles(new_board)
     
     # Check for win condition
     if count_correct_tiles(new_board) == BOARD_SIZE:
-        emit('game_won', {'winner': player_name}, broadcast=True)
-        reset_game()
+        emit('game_won', {'winner': player_name}, room=game_id)
+        room.reset()
     else:
-        emit('update_players', get_sorted_players(), broadcast=True)
+        emit('update_players', room.get_sorted_players(), room=game_id)
 
-def get_sorted_players():
-    """Get players sorted by correct tiles"""
-    sorted_players = [
-        {'name': name, 'correct_tiles': data['correct_tiles'], 'ready': data['ready']}
-        for name, data in players.items()
-    ]
-    return sorted(sorted_players, key=lambda x: x['correct_tiles'], reverse=True)
 
 @socketio.on('connect')
 def on_connect():
@@ -176,22 +175,19 @@ def on_connect():
 def on_disconnect():
     print(f"Client disconnected: {request.sid}")
     """Handle player disconnection"""
-    for player_name, player_data in list(players.items()):
-        if request.sid == player_data.get('sid', None):
-            del players[player_name]
-            emit('update_players', get_sorted_players(), broadcast=True)
-            break
+    # Check all game rooms for the disconnected player
+    for game_id, room in game_rooms.items():
+        for player_name, player_data in list(room.players.items()):
+            if request.sid == player_data.get('sid', None):
+                del room.players[player_name]
+                emit('update_players', room.get_sorted_players(), room=game_id)
+                break
 
-def reset_game():
+def reset_game(game_id):
     """Reset the game state"""
-    global game_started, initial_board, game_timer
-    game_started = False
-    initial_board = None
-    players.clear()  # Clear all players instead of just resetting their state
-    if game_timer:
-        game_timer.cancel()
-        game_timer = None
-    emit('game_reset', broadcast=True)
+    if game_id in game_rooms:
+        game_rooms[game_id].reset()
+        emit('game_reset', room=game_id)
 
 def timer_expired():
     """Handle game timer expiration"""
