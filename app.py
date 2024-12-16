@@ -17,10 +17,11 @@ socketio = SocketIO(
     async_mode='eventlet',
     logger=True,
     engineio_logger=True,
-    ping_timeout=20,
+    ping_timeout=60,
     ping_interval=25,
     max_http_buffer_size=1e8,
-    manage_session=False
+    manage_session=False,
+    transports=['websocket', 'polling']
 )
 
 # Game state
@@ -240,4 +241,8 @@ def timer_expired(game_id):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))
-    socketio.run(app, host='0.0.0.0', port=port, debug=True)
+    socketio.run(app, 
+                host='127.0.0.1',  # Use localhost instead of 0.0.0.0
+                port=port, 
+                debug=True,
+                allow_unsafe_werkzeug=True)  # Allow debug mode
