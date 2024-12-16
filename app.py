@@ -24,12 +24,11 @@ socketio = SocketIO(
     cors_allowed_origins="*",
     async_mode='eventlet',
     logger=True,
-    ping_timeout=60,
-    ping_interval=25,
-    reconnection=True,
-    reconnection_attempts=5,
-    reconnection_delay=1000,
-    reconnection_delay_max=5000
+    ping_timeout=120,
+    ping_interval=10,
+    max_http_buffer_size=1e8,
+    manage_session=False,
+    engineio_logger=True
 )
 
 # Game state
