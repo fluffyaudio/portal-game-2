@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 socketio = SocketIO(
     app,
-    cors_allowed_origins="*",
+    cors_allowed_origins=["http://127.0.0.1:5001", "http://localhost:5001"],
     async_mode='eventlet',
     logger=True,
     engineio_logger=True,
@@ -242,7 +242,7 @@ def timer_expired(game_id):
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))
     socketio.run(app, 
-                host='127.0.0.1',  # Use localhost instead of 0.0.0.0
+                host='localhost',
                 port=port, 
                 debug=True,
-                allow_unsafe_werkzeug=True)  # Allow debug mode
+                allow_unsafe_werkzeug=True)
