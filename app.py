@@ -163,9 +163,14 @@ def on_move(data):
         return
         
     # Update the player's state
+    old_correct = room.players[player_name]['correct_tiles']
     correct_tiles = count_correct_tiles(new_board)
+    room.players[player_name]['board'] = new_board
+    room.players[player_name]['correct_tiles'] = correct_tiles
+    
     print(f"[DEBUG] Player {player_name} made a move:")
     print(f"[DEBUG] Board state: {new_board}")
+    print(f"[DEBUG] Previous correct tiles: {old_correct}")
     print(f"[DEBUG] Calculating correct tiles...")
     for i, num in enumerate(new_board):
         if num != 0 and num == i + 1:
