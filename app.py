@@ -18,7 +18,7 @@ app.config['SECRET_KEY'] = 'your-secret-key-here'
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins=["http://127.0.0.1:5001", "http://localhost:5001", "https://portal-game-2.onrender.com"],
+    cors_allowed_origins="*",  # Allow all origins in production
     async_mode='eventlet',
     path='socket.io',
     always_connect=True,
@@ -28,7 +28,7 @@ socketio = SocketIO(
     ping_interval=25,
     max_http_buffer_size=1e8,
     manage_session=False,
-    transports=['websocket'],
+    transports=['websocket', 'polling'],  # Allow polling as fallback
     async_handlers=True
 )
 
@@ -219,8 +219,8 @@ def on_move(data):
     # Update player list for everyone in the room
     player_list = room.get_sorted_players()
     
-    # Send board update only to the player who made the move
-    emit('board_update', update_data)
+    # Send board update to everyone in the room
+    socketio.emit('board_update', update_data, room=game_id)
     print(f"[DEBUG] Room {game_id} - Broadcasting player list update: {json.dumps(player_list, indent=2)}")
     socketio.emit('update_players', player_list, room=game_id)
     
