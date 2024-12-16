@@ -192,19 +192,17 @@ def on_move(data):
     update_data = {
         'board': new_board,
         'correct_tiles': correct_tiles,
-        'player': player_name
+        'player': player_name,
+        'game_id': game_id
     }
     
-    # Send individual updates to each player
-    for player_info in room.players.values():
-        print(f"[DEBUG] Sending board_update to player SID: {player_info['sid']}")
-        socketio.emit('board_update', update_data, room=player_info['sid'])
+    # Send updates to the specific game room
+    socketio.emit('board_update', update_data, room=game_id)
     
-    # Update player list for everyone
+    # Update player list for everyone in the room
     player_list = room.get_sorted_players()
     print(f"[DEBUG] Broadcasting player list update: {json.dumps(player_list, indent=2)}")
-    for player_info in room.players.values():
-        socketio.emit('update_players', player_list, room=player_info['sid'])
+    socketio.emit('update_players', player_list, room=game_id)
     
     # Check for win condition
     if correct_tiles == BOARD_SIZE - 1:  # All tiles except empty space
