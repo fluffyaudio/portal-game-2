@@ -142,9 +142,9 @@ def on_ready(data):
                 room.game_timer.cancel()
             room.game_timer = threading.Timer(GAME_DURATION, lambda: timer_expired(game_id))
             room.game_timer.start()
-            emit('game_start', {'board': room.initial_board}, room=game_id)
+            socketio.emit('game_start', {'board': room.initial_board}, room=game_id)
         
-        emit('update_players', room.get_sorted_players(), room=game_id)
+        socketio.emit('update_players', room.get_sorted_players(), room=game_id)
 
 @socketio.on('move')
 def on_move(data):
