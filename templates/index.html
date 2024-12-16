@@ -149,9 +149,7 @@
         <button id="ready-button" onclick="setReady()">Ready</button>
         <div class="game-container">
             <div class="board" id="puzzle-board"></div>
-            {% if not is_render %}
             <div class="players-list" id="players-list"></div>
-            {% endif %}
         </div>
     </div>
 
@@ -170,7 +168,15 @@
             }
         }
 
-        const socket = io();
+        const socket = io({
+            transports: ['websocket'],
+            upgrade: false,
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            timeout: 20000,
+        });
         let playerName = '';
         let gameBoard = [];
         let isReady = false;

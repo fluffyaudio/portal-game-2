@@ -23,7 +23,13 @@ socketio = SocketIO(
     app,
     cors_allowed_origins="*",
     async_mode='eventlet',
-    logger=True
+    logger=True,
+    ping_timeout=60,
+    ping_interval=25,
+    reconnection=True,
+    reconnection_attempts=5,
+    reconnection_delay=1000,
+    reconnection_delay_max=5000
 )
 
 # Game state
@@ -122,7 +128,11 @@ def on_ready(data):
     player_name = data['name']
     game_id = data.get('game_id', 'default')
     
+    print(f"[DEBUG] Ready event received from {player_name} in room {game_id}")
+    
     if game_id not in game_rooms:
+        print(f"[ERROR] Game room {game_id} not found")
+        emit('error', {'message': 'Game room not found'})
         return
         
     room = game_rooms[game_id]
