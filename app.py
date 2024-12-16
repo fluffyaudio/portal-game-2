@@ -11,6 +11,10 @@ import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
+# Monkey patch for eventlet must come before any other imports
+import eventlet
+eventlet.monkey_patch(socket=True, select=True)
+
 socketio = SocketIO(
     app,
     cors_allowed_origins=["http://127.0.0.1:5001", "http://localhost:5001", "https://portal-game-2.onrender.com"],
@@ -19,16 +23,13 @@ socketio = SocketIO(
     always_connect=True,
     engineio_logger=True,
     logger=True,
-    ping_timeout=60,
+    ping_timeout=120,
     ping_interval=25,
     max_http_buffer_size=1e8,
     manage_session=False,
-    transports=['websocket']
+    transports=['websocket'],
+    async_handlers=True
 )
-
-# Monkey patch for eventlet
-import eventlet
-eventlet.monkey_patch()
 
 # Game state
 game_rooms = {}  # Dictionary to store multiple game instances

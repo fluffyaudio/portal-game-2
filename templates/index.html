@@ -171,11 +171,13 @@
         const socket = io({
             transports: ['websocket'],
             reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
+            reconnectionAttempts: 10,
+            reconnectionDelay: 2000,
+            reconnectionDelayMax: 10000,
             path: '/socket.io',
             forceNew: true,
-            timeout: 60000
+            timeout: 120000,
+            autoConnect: true
         });
         let playerName = '';
         let gameBoard = [];
