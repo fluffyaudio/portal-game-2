@@ -171,8 +171,16 @@ def on_move(data):
     # Update the player's state
     old_correct = room.players[player_name]['correct_tiles']
     correct_tiles = count_correct_tiles(new_board)
-    room.players[player_name]['board'] = new_board
+    room.players[player_name]['board'] = new_board.copy()  # Make a copy to prevent reference issues
     room.players[player_name]['correct_tiles'] = correct_tiles
+    
+    # Verify the correct tiles count is accurate
+    print(f"[DEBUG] Verifying correct tiles for {player_name} in room {game_id}")
+    actual_correct = sum(1 for i, num in enumerate(new_board) if num != 0 and num == i + 1)
+    if actual_correct != correct_tiles:
+        print(f"[DEBUG] Correcting tiles count mismatch: was {correct_tiles}, should be {actual_correct}")
+        correct_tiles = actual_correct
+        room.players[player_name]['correct_tiles'] = correct_tiles
     
     print(f"\n[DEBUG] Player {player_name} made a move:")
     print(f"[DEBUG] Board state: {new_board}")
@@ -206,8 +214,10 @@ def on_move(data):
     
     # Check for win condition
     if correct_tiles == BOARD_SIZE - 1:  # All tiles except empty space
-        emit('game_won', {'winner': player_name}, room=game_id)
-        room.reset()
+        print(f"[DEBUG] Win condition met in room {game_id} by player {player_name}")
+        socketio.emit('game_won', {'winner': player_name}, room=game_id)
+        # Give a small delay before resetting to ensure win message is received
+        threading.Timer(2.0, lambda: reset_game(game_id)).start()
 
 
 @socketio.on('connect')
@@ -229,8 +239,9 @@ def on_disconnect():
 def reset_game(game_id):
     """Reset the game state"""
     if game_id in game_rooms:
+        print(f"[DEBUG] Resetting game in room {game_id}")
         game_rooms[game_id].reset()
-        emit('game_reset', room=game_id)
+        socketio.emit('game_reset', room=game_id)
 
 def timer_expired(game_id):
     """Handle game timer expiration"""
