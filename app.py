@@ -71,8 +71,7 @@ def generate_board():
 def count_correct_tiles(board):
     """Count number of tiles in their correct position"""
     correct = 0
-    print("\n[DEBUG] Counting correct tiles:")
-    print(f"[DEBUG] Current board state: {board}")
+    print("\n[DEBUG] Counting correct tiles")
     for i, num in enumerate(board):
         if num != 0 and num == i + 1:
             correct += 1
@@ -178,23 +177,23 @@ def on_move(data):
     room.players[player_name]['board'] = new_board.copy()
     room.players[player_name]['correct_tiles'] = correct_tiles
     
-    print(f"[DEBUG] Player {player_name} in room {game_id}:")
-    print(f"[DEBUG] Previous correct tiles: {old_correct}")
-    print(f"[DEBUG] New correct tiles: {correct_tiles}")
+    print(f"\n[DEBUG] Room {game_id} - Player {player_name}:")
+    print(f"[DEBUG] Room {game_id} - Previous correct tiles: {old_correct}")
+    print(f"[DEBUG] Room {game_id} - New correct tiles: {correct_tiles}")
     
-    print(f"\n[DEBUG] Player {player_name} made a move:")
-    print(f"[DEBUG] Board state: {new_board}")
-    print(f"[DEBUG] Previous correct tiles: {old_correct}")
-    print(f"[DEBUG] Calculating correct tiles...")
-    print(f"[DEBUG] Checking each position:")
+    print(f"\n[DEBUG] Room {game_id} - Player {player_name} made a move:")
+    print(f"[DEBUG] Room {game_id} - Board state: {new_board}")
+    print(f"[DEBUG] Room {game_id} - Previous correct tiles: {old_correct}")
+    print(f"[DEBUG] Room {game_id} - Calculating correct tiles...")
+    print(f"[DEBUG] Room {game_id} - Checking each position:")
     total_correct = 0
     for i, num in enumerate(new_board):
         if num != 0 and num == i + 1:
             total_correct += 1
-            print(f"[DEBUG] Tile {num} is in correct position {i}")
-    print(f"[DEBUG] Total correct tiles found: {total_correct}")
-    print(f"[DEBUG] New correct tiles count: {correct_tiles}")
-    print(f"[DEBUG] Current room state: {json.dumps(room.get_sorted_players(), indent=2)}")
+            print(f"[DEBUG] Room {game_id} - Tile {num} is in correct position {i}")
+    print(f"[DEBUG] Room {game_id} - Total correct tiles found: {total_correct}")
+    print(f"[DEBUG] Room {game_id} - New correct tiles count: {correct_tiles}")
+    print(f"[DEBUG] Room {game_id} - Current room state: {json.dumps(room.get_sorted_players(), indent=2)}")
 
     # Broadcast updates to all clients in the room
     update_data = {
@@ -209,7 +208,7 @@ def on_move(data):
     
     # Update player list for everyone in the room
     player_list = room.get_sorted_players()
-    print(f"[DEBUG] Broadcasting player list update: {json.dumps(player_list, indent=2)}")
+    print(f"[DEBUG] Room {game_id} - Broadcasting player list update: {json.dumps(player_list, indent=2)}")
     socketio.emit('update_players', player_list, room=game_id)
     
     # Check for win condition
@@ -225,11 +224,11 @@ def on_move(data):
 
 @socketio.on('connect')
 def on_connect():
-    print(f"Client connected: {request.sid}")
+    print(f"[DEBUG] Client connected: {request.sid}")
 
 @socketio.on('disconnect')
 def on_disconnect():
-    print(f"Client disconnected: {request.sid}")
+    print(f"[DEBUG] Client disconnected: {request.sid}")
     """Handle player disconnection"""
     # Check all game rooms for the disconnected player
     for game_id, room in game_rooms.items():
