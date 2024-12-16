@@ -1,19 +1,20 @@
+# Monkey patch for eventlet must come before any other imports
+import eventlet
+eventlet.monkey_patch()
+
 import os
 from flask import Flask, render_template, request, session
 from dotenv import load_dotenv
-
-load_dotenv()
 from flask_socketio import SocketIO, emit
 import random
 import json
 import threading
 import time
 
+load_dotenv()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-# Monkey patch for eventlet must come before any other imports
-import eventlet
-eventlet.monkey_patch(socket=True, select=True)
 
 socketio = SocketIO(
     app,

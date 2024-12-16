@@ -7,4 +7,8 @@ worker_connections = 1000
 wsgi_env = "EVENTLET_WEBSOCKET=1"
 graceful_timeout = 300
 worker_tmp_dir = "/tmp"  # Use standard temp directory instead of /dev/shm
-preload_app = True
+preload_app = False  # Disable preloading to avoid file descriptor issues
+accesslog = "-"  # Log to stdout
+errorlog = "-"   # Log errors to stdout
+loglevel = "info"
+capture_output = True
