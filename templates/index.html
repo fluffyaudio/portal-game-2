@@ -169,16 +169,14 @@
         }
 
         const socket = io({
-            transports: ['polling', 'websocket'],
+            transports: ['websocket'],
             upgrade: false,
             reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            timeout: 20000,
-            autoConnect: true,
-            forceNew: false,
-            rejectUnauthorized: false
+            reconnectionAttempts: 3,
+            reconnectionDelay: 2000,
+            reconnectionDelayMax: 10000,
+            timeout: 10000,
+            autoConnect: true
         });
         let playerName = '';
         let gameBoard = [];
