@@ -37,7 +37,7 @@ socketio = SocketIO(
 )
 
 # Add health check endpoint
-@app.route('/health')
+@app.route('/healthz')
 def health_check():
     return 'OK', 200
 

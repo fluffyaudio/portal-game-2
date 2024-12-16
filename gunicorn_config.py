@@ -1,9 +1,9 @@
 worker_class = "eventlet"
 workers = 1
 bind = "0.0.0.0:10000"
-keepalive = 30
-timeout = 60
-worker_connections = 500
+keepalive = 20
+timeout = 30
+worker_connections = 250
 wsgi_env = "EVENTLET_WEBSOCKET=1"
 graceful_timeout = 30
 worker_tmp_dir = "/dev/shm"
