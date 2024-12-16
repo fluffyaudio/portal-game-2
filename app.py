@@ -18,22 +18,9 @@ app.config['SECRET_KEY'] = 'your-secret-key-here'
 
 socketio = SocketIO(
     app,
-    cors_allowed_origins="*",  # Allow all origins in production
+    cors_allowed_origins="*",
     async_mode='eventlet',
-    path='socket.io',
-    always_connect=True,
-    engineio_logger=True,
-    logger=True,
-    ping_timeout=60,  # Reduced from 120
-    ping_interval=15,  # Reduced from 25
-    max_http_buffer_size=1e8,
-    manage_session=False,
-    transports=['websocket', 'polling'],
-    async_handlers=True,
-    message_queue=None,
-    websocket_ping_interval=10,
-    websocket_ping_timeout=30,
-    websocket_max_message_size=1024 * 1024
+    logger=True
 )
 
 # Game state
