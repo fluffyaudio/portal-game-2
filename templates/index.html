@@ -325,8 +325,11 @@
             gameActive = true;
         });
         socket.on('board_update', data => {
-            gameBoard = data.board;
-            createBoard(gameBoard);
+            // Only update our board if it's our move
+            if (data.player === playerName) {
+                gameBoard = data.board;
+                createBoard(gameBoard);
+            }
         });
     </script>
 </body>
