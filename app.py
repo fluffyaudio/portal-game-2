@@ -257,6 +257,7 @@ def timer_expired(game_id):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5001))
+    print(f"Starting server on http://localhost:{port}")
     socketio.run(app, 
                 host='localhost',
                 port=port, 
