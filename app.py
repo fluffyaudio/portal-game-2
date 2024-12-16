@@ -13,6 +13,9 @@ import time
 
 load_dotenv()
 
+# Check if we're running on render.com
+IS_RENDER = os.environ.get('RENDER', False)
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 
@@ -83,7 +86,7 @@ def count_correct_tiles(board):
 @app.route('/')
 @app.route('/<game_id>')
 def index(game_id=None):
-    return render_template('index.html', game_id=game_id)
+    return render_template('index.html', game_id=game_id, is_render=IS_RENDER)
 
 @socketio.on('join')
 def on_join(data):

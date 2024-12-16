@@ -149,7 +149,9 @@
         <button id="ready-button" onclick="setReady()">Ready</button>
         <div class="game-container">
             <div class="board" id="puzzle-board"></div>
+            {% if not is_render %}
             <div class="players-list" id="players-list"></div>
+            {% endif %}
         </div>
     </div>
 
