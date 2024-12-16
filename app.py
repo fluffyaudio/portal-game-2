@@ -168,14 +168,18 @@ def on_move(data):
     room.players[player_name]['board'] = new_board
     room.players[player_name]['correct_tiles'] = correct_tiles
     
-    print(f"[DEBUG] Player {player_name} made a move:")
+    print(f"\n[DEBUG] Player {player_name} made a move:")
     print(f"[DEBUG] Board state: {new_board}")
     print(f"[DEBUG] Previous correct tiles: {old_correct}")
     print(f"[DEBUG] Calculating correct tiles...")
+    print(f"[DEBUG] Checking each position:")
+    total_correct = 0
     for i, num in enumerate(new_board):
         if num != 0 and num == i + 1:
+            total_correct += 1
             print(f"[DEBUG] Tile {num} is in correct position {i}")
-    print(f"[DEBUG] New correct tiles: {correct_tiles}")
+    print(f"[DEBUG] Total correct tiles found: {total_correct}")
+    print(f"[DEBUG] New correct tiles count: {correct_tiles}")
     print(f"[DEBUG] Current room state: {json.dumps(room.get_sorted_players(), indent=2)}")
 
     # Broadcast updates to all clients in the room
