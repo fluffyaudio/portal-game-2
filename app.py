@@ -69,7 +69,12 @@ def generate_board():
 
 def count_correct_tiles(board):
     """Count number of tiles in their correct position"""
-    return sum(1 for i, num in enumerate(board) if num != 0 and num == i + 1)
+    correct = 0
+    for i, num in enumerate(board):
+        if num != 0 and num == i + 1:
+            correct += 1
+    print(f"[DEBUG] Total correct tiles: {correct}")
+    return correct
 
 @app.route('/')
 @app.route('/<game_id>')
@@ -157,16 +162,14 @@ def on_move(data):
     if differences != 2:  # Only 2 positions should change in a valid move
         return
         
-    # Update the current player's board and correct tile count
-    room.players[player_name]['board'] = new_board
-    correct_tiles = count_correct_tiles(new_board)
-    room.players[player_name]['correct_tiles'] = correct_tiles
-    
     # Update the player's state
-    room.players[player_name]['board'] = new_board
-    room.players[player_name]['correct_tiles'] = correct_tiles
-    
+    correct_tiles = count_correct_tiles(new_board)
     print(f"[DEBUG] Player {player_name} made a move:")
+    print(f"[DEBUG] Board state: {new_board}")
+    print(f"[DEBUG] Calculating correct tiles...")
+    for i, num in enumerate(new_board):
+        if num != 0 and num == i + 1:
+            print(f"[DEBUG] Tile {num} is in correct position {i}")
     print(f"[DEBUG] New correct tiles: {correct_tiles}")
     print(f"[DEBUG] Current room state: {json.dumps(room.get_sorted_players(), indent=2)}")
 
