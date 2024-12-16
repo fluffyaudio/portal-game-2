@@ -172,11 +172,13 @@
             transports: ['websocket'],
             upgrade: false,
             reconnection: true,
-            reconnectionAttempts: 3,
-            reconnectionDelay: 2000,
-            reconnectionDelayMax: 10000,
-            timeout: 10000,
-            autoConnect: true
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            timeout: 5000,
+            autoConnect: true,
+            path: '/socket.io',
+            forceNew: true
         });
         let playerName = '';
         let gameBoard = [];

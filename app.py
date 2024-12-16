@@ -24,16 +24,22 @@ socketio = SocketIO(
     cors_allowed_origins="*",
     async_mode='eventlet',
     logger=True,
-    ping_timeout=20,
-    ping_interval=10,
+    ping_timeout=15,
+    ping_interval=8,
     max_http_buffer_size=1e4,
     manage_session=False,
     engineio_logger=True,
     always_connect=True,
     reconnection=True,
-    reconnection_attempts=3,
-    reconnection_delay=2000
+    reconnection_attempts=5,
+    reconnection_delay=1000,
+    path='socket.io'
 )
+
+# Add health check endpoint
+@app.route('/health')
+def health_check():
+    return 'OK', 200
 
 # Game state
 game_rooms = {}  # Dictionary to store multiple game instances
