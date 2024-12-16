@@ -23,8 +23,12 @@ socketio = SocketIO(
     ping_interval=25,
     max_http_buffer_size=1e8,
     manage_session=False,
-    transports=['websocket', 'polling']
+    transports=['websocket']
 )
+
+# Monkey patch for eventlet
+import eventlet
+eventlet.monkey_patch()
 
 # Game state
 game_rooms = {}  # Dictionary to store multiple game instances

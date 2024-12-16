@@ -173,7 +173,9 @@
             reconnection: true,
             reconnectionAttempts: 5,
             reconnectionDelay: 1000,
-            path: '/socket.io'
+            path: '/socket.io',
+            forceNew: true,
+            timeout: 60000
         });
         let playerName = '';
         let gameBoard = [];
