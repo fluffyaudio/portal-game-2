@@ -204,21 +204,18 @@ def on_move(data):
         'game_id': game_id
     }
     
-    # Send individual updates to each player in the room
-    for player_info in room.players.values():
-        socketio.emit('board_update', update_data, room=player_info['sid'])
+    # Send updates to the entire room
+    socketio.emit('board_update', update_data, room=game_id)
     
     # Update player list for everyone in the room
     player_list = room.get_sorted_players()
     print(f"[DEBUG] Broadcasting player list update: {json.dumps(player_list, indent=2)}")
-    for player_info in room.players.values():
-        socketio.emit('update_players', player_list, room=player_info['sid'])
+    socketio.emit('update_players', player_list, room=game_id)
     
     # Check for win condition
     if correct_tiles == BOARD_SIZE - 1:  # All tiles except empty space
         print(f"[DEBUG] Win condition met in room {game_id} by player {player_name}")
-        for player_info in room.players.values():
-            socketio.emit('game_won', {'winner': player_name}, room=player_info['sid'])
+        socketio.emit('game_won', {'winner': player_name}, room=game_id)
         # Reset game after a short delay
         def delayed_reset():
             if game_id in game_rooms:
@@ -248,6 +245,10 @@ def reset_game(game_id):
         print(f"[DEBUG] Resetting game in room {game_id}")
         game_rooms[game_id].reset()
         socketio.emit('game_reset', room=game_id)
+        # Clean up the room if it's empty
+        if not game_rooms[game_id].players:
+            del game_rooms[game_id]
+            print(f"[DEBUG] Removed empty room {game_id}")
 
 def timer_expired(game_id):
     """Handle game timer expiration"""
