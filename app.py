@@ -70,10 +70,15 @@ def generate_board():
 def count_correct_tiles(board):
     """Count number of tiles in their correct position"""
     correct = 0
+    print("\n[DEBUG] Counting correct tiles:")
+    print(f"[DEBUG] Current board state: {board}")
     for i, num in enumerate(board):
         if num != 0 and num == i + 1:
             correct += 1
-    print(f"[DEBUG] Total correct tiles: {correct}")
+            print(f"[DEBUG] Position {i}: Tile {num} is correct")
+        else:
+            print(f"[DEBUG] Position {i}: Tile {num} is incorrect (should be {i+1})")
+    print(f"[DEBUG] Total correct tiles found: {correct}")
     return correct
 
 @app.route('/')
