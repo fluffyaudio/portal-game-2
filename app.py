@@ -24,12 +24,16 @@ socketio = SocketIO(
     always_connect=True,
     engineio_logger=True,
     logger=True,
-    ping_timeout=120,
-    ping_interval=25,
+    ping_timeout=60,  # Reduced from 120
+    ping_interval=15,  # Reduced from 25
     max_http_buffer_size=1e8,
     manage_session=False,
-    transports=['websocket', 'polling'],  # Allow polling as fallback
-    async_handlers=True
+    transports=['websocket', 'polling'],
+    async_handlers=True,
+    message_queue=None,
+    websocket_ping_interval=10,
+    websocket_ping_timeout=30,
+    websocket_max_message_size=1024 * 1024
 )
 
 # Game state

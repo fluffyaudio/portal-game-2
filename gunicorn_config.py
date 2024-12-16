@@ -12,3 +12,7 @@ accesslog = "-"  # Log to stdout
 errorlog = "-"   # Log errors to stdout
 loglevel = "info"
 capture_output = True
+reload = True
+proxy_protocol = True
+proxy_allow_ips = "*"
+forwarded_allow_ips = "*"
