@@ -151,7 +151,12 @@ def on_move(data):
     room = game_rooms[game_id]
     
     # Validate the move
-    if not player_name in room.players or not room.game_started:
+    if not player_name in room.players:
+        print(f"[DEBUG] Room {game_id} - Player {player_name} not found in room")
+        return
+        
+    if not room.game_started:
+        print(f"[DEBUG] Room {game_id} - Game not started yet")
         return
         
     # Validate board state

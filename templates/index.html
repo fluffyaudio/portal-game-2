@@ -156,7 +156,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         // Get game ID from URL or use default
-        const gameId = window.location.pathname.substring(1) || 'default';
+        const gameId = window.location.pathname.length > 1 ? window.location.pathname.substring(1) : 'default';
         // Socket.IO connection status handling
         let connectionStatus = false;
         
@@ -296,7 +296,7 @@
             // Swap tiles
             [gameBoard[index], gameBoard[emptyIndex]] = [gameBoard[emptyIndex], gameBoard[index]];
             createBoard(gameBoard);
-            socket.emit('move', { name: playerName, board: gameBoard });
+            socket.emit('move', { name: playerName, board: gameBoard, game_id: gameId });
         }
 
         function isValidMove(index, emptyIndex) {
